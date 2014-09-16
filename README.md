@@ -9,7 +9,7 @@ similar tool for Linux, thus I have decided to create something useful by myself
 version of J-Link programmer GUI based on wxPython.
 
 
-.. image:: https://github.com/molejar/jlink-flasher/doc/main_window.png
+.. image:: doc/main_window.png
     :alt: JLink Flasher: main window
     :align: center
 
