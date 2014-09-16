@@ -8,5 +8,11 @@ which can program internal and external flash on ARM/Cortex devices.  Because I 
 similar tool for Linux, thus I have decided to create something useful by myself. And here is my first 
 version of J-Link programmer GUI based on wxPython.
 
-                ![JLink Flasher: main window](doc/main_window.png)
+
+.. image:: https://github.com/molejar/jlink-flasher/doc/main_window.png
+    :alt: JLink Flasher: main window
+    :align: center
+
+------
+
 
