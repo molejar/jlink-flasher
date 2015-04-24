@@ -2,11 +2,14 @@
 
 from __future__ import print_function
 
-import os, sys, wx, configparser
+import platform
+import os, sys, wx, ConfigParser
 import subprocess, threading
 import flasher_gui
 
-wx.Log_EnableLogging()
+#wx.Log_EnableLogging()
+
+
 
 
 class JLink(object):
@@ -15,26 +18,31 @@ class JLink(object):
         JLink control class
 
         """
+        if platform.system() is "Windows":
+            self.os_type = "win"
+        else:
+            self.os_type = "linux"
         self.pwd = os.path.dirname(os.path.realpath(sys.argv[0]))
-        self.mcu_db_file = self.pwd + "/mcu.db"
-        self.script_file = self.pwd + "/script.jlink"
-        self.config_file = self.pwd + "/flasher.cfg"
+        self.mcu_db_file = os.path.join(self.pwd, "mcu.db")
+        self.script_file = os.path.join(self.pwd, "script.jlink")
+        self.config_file = os.path.join(self.pwd, "flasher.cfg")
         self.supported_speeds = ["100", "200", "400", "800", "1000"]
         self.supported_interfaces = ["JTAG", "SWD"]
         self.cmd = ""
         # Configurable var.
         self.app_file = ""
         self.supported_chips = []
-
         self.LoadConfig()
+        print(platform.system())
 
 
     def __del__(self):
         pass
 
     def LoadConfig(self):
-        config = configparser.ConfigParser()
-        if config.read(self.config_file) is True:
+        print(self.config_file)
+        config = ConfigParser.ConfigParser()
+        if config.read(self.config_file):
             self.app_file = config.get('Settings', 'app_file')
             self.supported_chips = config.get('Settings', 'usr_chips').split(', ')
             return True
@@ -45,13 +53,13 @@ class JLink(object):
 
 
     def SaveConfig(self):
-        config = configparser.ConfigParser()
+        config = ConfigParser.ConfigParser()
         config.add_section("Settings")
         config.set('Settings', 'app_file', self.app_file)
         config.set('Settings', 'usr_chips', ', '.join(self.supported_chips))
         # Writing our configuration file to 'example.cfg'
-        with open(self.config_file, 'wb') as configfile:
-            config.write(configfile)
+        with open(self.config_file, 'wb') as configf:
+            config.write(configf)
             configfile.close()
 
 
@@ -123,9 +131,13 @@ class SettingsGUI(flasher_gui.ConfigDialog):
         pass
 
     def OnSelectDir(self, event):
+        if self.jlink.os_type is "win":
+            file_filter = "JLink.exe |JLink.exe"
+        else:
+            file_filter = "JLinkExe |JLinkExe"
         path = wx.FileDialog(self, "Found JLink Install Dir",
                              os.path.dirname(self.m_textCtrl_jlink_path.Value),
-                             "", "JLinkExe |JLinkExe| All (*) |*", wx.FD_FILE_MUST_EXIST)
+                             "", file_filter, wx.FD_FILE_MUST_EXIST)
         if path.ShowModal() == wx.ID_OK:
             self.m_textCtrl_jlink_path.SetValue(path.Path)
             self.m_button_db_update.Enable(True)

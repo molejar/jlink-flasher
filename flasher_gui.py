@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 ###########################################################################
-## Python code generated with wxFormBuilder (version Jun  6 2014)
+## Python code generated with wxFormBuilder (version Jun  5 2014)
 ## http://www.wxformbuilder.org/
 ##
 ## PLEASE DO "NOT" EDIT THIS FILE!
@@ -20,7 +20,7 @@ class AppFrame ( wx.Frame ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"JLink Flasher", pos = wx.DefaultPosition, size = wx.Size( 550,500 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.Size( 550,500 ), wx.DefaultSize )
-		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
+		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_MENU ) )
 		
 		self.m_menubar = wx.MenuBar( 0 )
 		self.m_menu_file = wx.Menu()
@@ -32,14 +32,14 @@ class AppFrame ( wx.Frame ):
 		
 		self.m_menu_tools = wx.Menu()
 		self.m_menuItem_settings = wx.MenuItem( self.m_menu_tools, wx.ID_ANY, u"&Settings"+ u"\t" + u"CTRL+S", wx.EmptyString, wx.ITEM_NORMAL )
-		self.m_menuItem_settings.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_HELP_SETTINGS,  ) )
+		self.m_menuItem_settings.SetBitmap( wx.NullBitmap )
 		self.m_menu_tools.AppendItem( self.m_menuItem_settings )
 		
 		self.m_menubar.Append( self.m_menu_tools, u"&Tools" ) 
 		
 		self.m_menu_help = wx.Menu()
 		self.m_menuItem_about = wx.MenuItem( self.m_menu_help, wx.ID_ANY, u"&About.."+ u"\t" + u"F1", wx.EmptyString, wx.ITEM_NORMAL )
-		self.m_menuItem_about.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_HELP,  ) )
+		self.m_menuItem_about.SetBitmap( wx.ArtProvider.GetBitmap( wx.ART_HELP_FOLDER,  ) )
 		self.m_menu_help.AppendItem( self.m_menuItem_about )
 		
 		self.m_menubar.Append( self.m_menu_help, u"&Help" ) 
@@ -53,6 +53,8 @@ class AppFrame ( wx.Frame ):
 		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.m_panel2 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel2.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_MENU ) )
+		
 		fgSizer31 = wx.FlexGridSizer( 4, 1, 0, 0 )
 		fgSizer31.AddGrowableCol( 0 )
 		fgSizer31.AddGrowableRow( 2 )
@@ -76,7 +78,7 @@ class AppFrame ( wx.Frame ):
 		self.m_choice_target.SetFont( wx.Font( 9, 74, 90, 90, False, "Sans" ) )
 		self.m_choice_target.SetToolTipString( u"Select Target MCU" )
 		
-		bSizer6.Add( self.m_choice_target, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer6.Add( self.m_choice_target, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
 		
 		self.m_button_add = wx.Button( self.m_panel2, wx.ID_ANY, u"Add", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_button_add.SetFont( wx.Font( 9, 74, 90, 92, False, "Sans" ) )
@@ -147,7 +149,7 @@ class AppFrame ( wx.Frame ):
 		bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_staticline3 = wx.StaticLine( self.m_panel2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		bSizer3.Add( self.m_staticline3, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer3.Add( self.m_staticline3, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_staticText5 = wx.StaticText( self.m_panel2, wx.ID_ANY, u"<< Log >>", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText5.Wrap( -1 )
@@ -156,7 +158,9 @@ class AppFrame ( wx.Frame ):
 		bSizer3.Add( self.m_staticText5, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_staticline1 = wx.StaticLine( self.m_panel2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		bSizer3.Add( self.m_staticline1, 1, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.m_staticline1.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		
+		bSizer3.Add( self.m_staticline1, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		fgSizer31.Add( bSizer3, 1, wx.EXPAND|wx.RIGHT|wx.LEFT, 5 )
@@ -216,7 +220,7 @@ class AppFrame ( wx.Frame ):
 		
 		self.SetSizer( fgSizer )
 		self.Layout()
-		self.m_statusBar = self.CreateStatusBar( 1, wx.ST_SIZEGRIP|wx.DOUBLE_BORDER, wx.ID_ANY )
+		self.m_statusBar = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		
 		self.Centre( wx.BOTH )
 		
@@ -289,9 +293,9 @@ class ConfigDialog ( wx.Dialog ):
 		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_textCtrl_jlink_path = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
-		self.m_textCtrl_jlink_path.SetMinSize( wx.Size( -1,30 ) )
+		self.m_textCtrl_jlink_path.SetMinSize( wx.Size( -1,26 ) )
 		
-		bSizer10.Add( self.m_textCtrl_jlink_path, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer10.Add( self.m_textCtrl_jlink_path, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_bt_jlink_path = wx.Button( self, wx.ID_ANY, u"...", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer10.Add( self.m_bt_jlink_path, 0, wx.ALL, 5 )
@@ -305,13 +309,13 @@ class ConfigDialog ( wx.Dialog ):
 		
 		bSizer5 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_textCtrl_db_info = wx.TextCtrl( self, wx.ID_ANY, u"NA", wx.DefaultPosition, wx.Size( -1,30 ), wx.TE_CENTRE|wx.TE_READONLY )
+		self.m_textCtrl_db_info = wx.TextCtrl( self, wx.ID_ANY, u"NA", wx.DefaultPosition, wx.Size( -1,25 ), wx.TE_CENTRE|wx.TE_READONLY )
 		self.m_textCtrl_db_info.SetBackgroundColour( wx.Colour( 251, 210, 160 ) )
 		self.m_textCtrl_db_info.Enable( False )
 		
-		bSizer5.Add( self.m_textCtrl_db_info, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		bSizer5.Add( self.m_textCtrl_db_info, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.m_gauge_status = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( -1,30 ), wx.GA_HORIZONTAL )
+		self.m_gauge_status = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( -1,25 ), wx.GA_HORIZONTAL )
 		self.m_gauge_status.SetValue( 0 ) 
 		self.m_gauge_status.Enable( False )
 		
@@ -320,7 +324,7 @@ class ConfigDialog ( wx.Dialog ):
 		self.m_button_db_update = wx.Button( self, wx.ID_ANY, u"Update", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_button_db_update.Enable( False )
 		
-		bSizer5.Add( self.m_button_db_update, 0, wx.ALL, 5 )
+		bSizer5.Add( self.m_button_db_update, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
 		fgSizer5.Add( bSizer5, 1, wx.EXPAND, 5 )
