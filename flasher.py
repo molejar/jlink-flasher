@@ -2,13 +2,14 @@
 
 from __future__ import print_function
 
+import os, sys, wx
+import ConfigParser
+import subprocess
+import threading
 import platform
-import os, sys, wx, ConfigParser
-import subprocess, threading
 import flasher_gui
 
 #wx.Log_EnableLogging()
-
 
 
 
@@ -22,32 +23,30 @@ class JLink(object):
             self.os_type = "win"
         else:
             self.os_type = "linux"
+        #
         self.pwd = os.path.dirname(os.path.realpath(sys.argv[0]))
         self.mcu_db_file = os.path.join(self.pwd, "mcu.db")
         self.script_file = os.path.join(self.pwd, "script.jlink")
         self.config_file = os.path.join(self.pwd, "flasher.cfg")
         self.supported_speeds = ["100", "200", "400", "800", "1000"]
         self.supported_interfaces = ["JTAG", "SWD"]
-        self.cmd = ""
         # Configurable var.
         self.app_file = ""
         self.supported_chips = []
         self.LoadConfig()
-        print(platform.system())
 
 
     def __del__(self):
         pass
 
     def LoadConfig(self):
-        print(self.config_file)
         config = ConfigParser.ConfigParser()
         if config.read(self.config_file):
             self.app_file = config.get('Settings', 'app_file')
             self.supported_chips = config.get('Settings', 'usr_chips').split(', ')
             return True
         else:
-            self.app_file = "/opt/segger/jlink/JLinkExe"
+            self.app_file = "Set The JLink.exe path"
             self.supported_chips = ["MKL25Z128xxx4", "MKL46Z256xxx4"]
             return False
 
@@ -58,8 +57,8 @@ class JLink(object):
         config.set('Settings', 'app_file', self.app_file)
         config.set('Settings', 'usr_chips', ', '.join(self.supported_chips))
         # Writing our configuration file to 'example.cfg'
-        with open(self.config_file, 'wb') as configf:
-            config.write(configf)
+        with open(self.config_file, 'wb') as configfile:
+            config.write(configfile)
             configfile.close()
 
 
@@ -74,6 +73,7 @@ class JLink(object):
             elif cmd_type == 'Unlock':
                 jsc_file.write('unlock kinetis\n')
             elif cmd_type == 'Program':
+                #jsc_file.write('erase\n')
                 jsc_file.write('loadbin ' + image + ', ' + offset + '\n')
             else:
                 print("BuildScript: Unsuported CMD")
@@ -81,8 +81,6 @@ class JLink(object):
             jsc_file.write('r\n')
             jsc_file.write('exit\n')
             jsc_file.close()
-
-            self.cmd = self.app_file + " -CommanderScript " + self.script_file
         return True
 
 
@@ -94,8 +92,9 @@ class JLink(object):
             # Clear file if exist
             fd = open(self.mcu_db_file, 'w')
             fd.close()
+
             # Execute JLinkExe and generate supported MCU collection
-            subprocess.call(self.app_file + " -CommanderScript " + self.script_file, shell=True)
+            subprocess.call("\"" + self.app_file + "\"" + " -CommanderScript " + self.script_file, shell=True)
         return True
 
 
@@ -139,10 +138,12 @@ class SettingsGUI(flasher_gui.ConfigDialog):
                              os.path.dirname(self.m_textCtrl_jlink_path.Value),
                              "", file_filter, wx.FD_FILE_MUST_EXIST)
         if path.ShowModal() == wx.ID_OK:
+            self.jlink.app_file = path.Path
             self.m_textCtrl_jlink_path.SetValue(path.Path)
             self.m_button_db_update.Enable(True)
             self.m_gauge_status.Enable(True)
             self.m_textCtrl_db_info.Enable(True)
+
         event.Skip()
 
     def OnUpdateDB(self, event):
@@ -266,7 +267,7 @@ class FlasherGUI(flasher_gui.AppFrame):
 
     def OnSettings(self, event):
         m_setting_dialog = SettingsGUI(parent=None, jlink=self.jlink)
-        if m_setting_dialog.ShowModal() != wx.ID_CANCEL:
+        if m_setting_dialog.ShowModal() == wx.ID_CANCEL:
             self.m_textCtrl_log.AppendText("OK\n")
             self.jlink.app_file = m_setting_dialog.m_textCtrl_jlink_path.Value
             self.jlink.SaveConfig()
@@ -299,7 +300,7 @@ class FlasherGUI(flasher_gui.AppFrame):
         event.Skip()
 
     def OnImageUpdated(self, event):
-        if self.m_filePicker_targetImage.CheckPath(self.m_filePicker_targetImage.Path):
+        if os.path.exists(self.m_filePicker_targetImage.Path):
             self.m_button_flash.Enable(True)
             self.m_textCtrl_offset.Enable(True)
         else:
@@ -349,11 +350,11 @@ class FlasherGUI(flasher_gui.AppFrame):
 
 
     def run(self):
-        if self.jlink.cmd != "":
-            for line in subprocess.Popen(self.jlink.cmd, shell=True,
-                                         stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT).stdout:
-                wx.CallAfter(self.m_textCtrl_log.AppendText, line)
+        for line in subprocess.Popen("\"" + self.jlink.app_file + "\"" + " -CommanderScript " + self.jlink.script_file,
+                                     shell=True,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT).stdout:
+            wx.CallAfter(self.m_textCtrl_log.AppendText, line)
 
 
 class MyApp(wx.App):

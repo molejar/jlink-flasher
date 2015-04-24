@@ -1,0 +1,15 @@
+dist
+build
+
+flasher.spec
+flasher.cfg
+script.jlink
+mcu.db
+
+*.pyc
+
+# Intelij files
+.idea
+
+
+
