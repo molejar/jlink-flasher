@@ -62,11 +62,11 @@ class JLink(object):
             configfile.close()
 
 
-    def BuildScript(self, cmd_type, chip_type=None, interface=1, speed='100', image=None, offset='0x00000000'):
+    def BuildScript(self, cmd_type, chip_type, interface=1, speed='100', image=None, offset='0x00000000'):
         with open(self.script_file, 'w') as jsc_file:
             jsc_file.write('si ' + str(interface) + '\n')
             jsc_file.write('speed ' + self.supported_speeds[speed] + '\n')
-            jsc_file.write('device ' + self.supported_chips[chip_type] + '\n')
+            jsc_file.write('device ' + chip_type + '\n')
 
             if cmd_type == 'Erase':
                 jsc_file.write('erase\n')
@@ -250,7 +250,7 @@ class FlasherGUI(flasher_gui.AppFrame):
         self.m_choice_dbg_interface.SetSelection(1)
         for n in self.jlink.supported_speeds:
             self.m_choice_speed.Append(n + ' kHz')
-        self.m_choice_speed.SetSelection(0)
+        self.m_choice_speed.SetSelection(4)
         #self.m_textCtrl_log.AppendText(self.jlink.pwd)
 
     def __del__(self):
@@ -335,7 +335,7 @@ class FlasherGUI(flasher_gui.AppFrame):
         self.m_textCtrl_log.Clear()
         self.m_textCtrl_log.AppendText("\n<<<< " + cmd + " Target >>>> \n\n")
         status = self.jlink.BuildScript(cmd_type=cmd,
-                                        chip_type=self.m_choice_target.GetSelection(),
+                                        chip_type=self.m_choice_target.GetStringSelection(),
                                         interface=self.m_choice_dbg_interface.GetSelection(),
                                         speed=self.m_choice_speed.GetSelection(),
                                         image=self.m_filePicker_targetImage.Path,
